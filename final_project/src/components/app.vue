@@ -5,19 +5,10 @@
             <input type="text" v-model="newItem" placeholder="Item" />
             <button type="submit">Add</button>
 
-            <ul>
-                <li v-for="(item,i) in items" :key="i">
-                    <a href="" @click.prevent="selectUser(i)">{{item}}</a>
-                </li>
-            </ul>
+            <list :items="items" @itemSelected="selectItem"></list>
         </form>
 
-
-        <div v-if="showDetails">
-            <h1>Details For {{selectedItem}}</h1>
-            <p>Index: {{selectedItemIndex}}</p>
-            <button @click="deleteItem(selectedItemIndex)">Delete {{selectedItem}}</button>
-        </div>
+        <detail v-if="showDetails" :item="selectedItem" @deleteItem="deleteItem"></detail>
     </template>
 
     <p v-else>LOADING</p>
@@ -33,8 +24,13 @@ const {
     fetchItems
 } = require('../fake_api.js')
 
+const components = {
+    'detail': require('./detail.vue'),
+    'list': require('./list.vue')
+}
 
 module.exports = {
+    components,
     data() {
         return {
             newItem: "",
@@ -55,7 +51,10 @@ module.exports = {
         },
         selectedItem() {
             if (this.selectedItemIndex === null) return null;
-            return this.items[this.selectedItemIndex];
+            return {
+                index: this.selectedItemIndex,
+                value: this.items[this.selectedItemIndex]
+            }
         }
     },
     methods: {
@@ -68,7 +67,7 @@ module.exports = {
             this.items.splice(index, 1);
             this.selectedItemIndex = null;
         },
-        selectUser(index) {
+        selectItem(index) {
             this.selectedItemIndex = index;
         }
     }
