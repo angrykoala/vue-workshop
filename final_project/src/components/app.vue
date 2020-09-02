@@ -20,10 +20,6 @@
 <script>
 "use strict";
 
-const {
-    fetchItems
-} = require('../fake_api.js')
-
 const components = {
     'detail': require('./detail.vue'),
     'list': require('./list.vue')
@@ -34,14 +30,12 @@ module.exports = {
     data() {
         return {
             newItem: "",
-            items: [],
             selectedItemIndex: null,
             ready: false
         }
     },
     mounted() {
-        fetchItems().then((items) => {
-            this.items = items
+        this.$store.dispatch("fetchItems").then(() => {
             this.ready = true
         })
     },
@@ -55,16 +49,20 @@ module.exports = {
                 index: this.selectedItemIndex,
                 value: this.items[this.selectedItemIndex]
             }
+        },
+        items() {
+            return this.$store.state.items
         }
     },
     methods: {
         onNewItem() {
-            if (this.newItem)
-                this.items.push(this.newItem);
+            if (this.newItem) {
+                this.$store.commit("addItem", this.newItem);
+            }
             this.newItem = ""
         },
         deleteItem(index) {
-            this.items.splice(index, 1);
+            this.$store.commit("deleteItem", index);
             this.selectedItemIndex = null;
         },
         selectItem(index) {

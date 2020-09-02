@@ -1,17 +1,15 @@
 'use strict';
 
 const Vue = require('vue/dist/vue.common');
-// const Vuex = require("vuex").default;
+const Vuex = require("vuex").default;
 
-// Vue.use(Vuex);
+Vue.use(Vuex);
 
 const app = require('./components/app.vue');
-// const store = require("./store");
-// const {socket} = connectSocket('admin');
-
+const store = require("./store");
 
 module.exports = new Vue({
     el: '#app',
-    // store,
+    store,
     render: h => h(app)
 });
