@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1>Details For {{item.value}}</h1>
+    <h1>Details for {{item.value}}</h1>
     <p>Index: {{item.index}}</p>
     <button @click="onDelete" class="delete-button">Delete {{item.value}}</button>
 </div>
