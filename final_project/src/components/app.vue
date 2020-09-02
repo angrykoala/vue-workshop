@@ -10,9 +10,9 @@
             <input type="text" v-model="newItem" placeholder="Item" :class="{invalid: !canAddItem}" />
             <!-- We don't need @click event, as submit event will already take care of this click -->
             <button type="submit" :disabled="!canAddItem">Add</button>
-            <!-- Custom list component -->
-            <list :items="items" @itemSelected="selectItem"></list>
         </form>
+        <!-- Custom list component -->
+        <list :items="items" @itemSelected="selectItem"></list>
 
         <!-- Custom detail component -->
         <detail v-if="showDetails" :item="selectedItem" @deleteItem="deleteItem"></detail>
