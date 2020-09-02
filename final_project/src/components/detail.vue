@@ -2,10 +2,9 @@
 <div>
     <h1>Details For {{item.value}}</h1>
     <p>Index: {{item.index}}</p>
-    <button @click="onDelete">Delete {{item.value}}</button>
+    <button @click="onDelete" class="delete-button">Delete {{item.value}}</button>
 </div>
 </template>
-
 
 <script>
 "use strict";
@@ -19,3 +18,13 @@ module.exports = {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+div {
+    background-color: #e2e2e2;
+
+    .delete-button {
+        background-color: #c90000;
+    }
+}
+</style>

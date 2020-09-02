@@ -1,9 +1,9 @@
 <template>
 <div>
     <template v-if="ready">
-        <form @submit.prevent="onNewItem">
-            <input type="text" v-model="newItem" placeholder="Item" />
-            <button type="submit">Add</button>
+        <form @submit.prevent="onNewItem" class="item-form">
+            <input type="text" v-model="newItem" placeholder="Item" :class="{invalid: !canAddItem}" />
+            <button type="submit" :disabled="!canAddItem">Add</button>
 
             <list :items="items" @itemSelected="selectItem"></list>
         </form>
@@ -35,9 +35,9 @@ module.exports = {
         }
     },
     mounted() {
-        this.$store.dispatch("fetchItems").then(() => {
+        // this.$store.dispatch("fetchItems").then(() => {
             this.ready = true
-        })
+        // })
     },
     computed: {
         showDetails() {
@@ -52,14 +52,17 @@ module.exports = {
         },
         items() {
             return this.$store.state.items
+        },
+        canAddItem() {
+            return this.newItem && this.items.length < 10;
         }
     },
     methods: {
         onNewItem() {
-            if (this.newItem) {
+            if (this.canAddItem) {
                 this.$store.commit("addItem", this.newItem);
+                this.newItem = ""
             }
-            this.newItem = ""
         },
         deleteItem(index) {
             this.$store.commit("deleteItem", index);
@@ -73,4 +76,11 @@ module.exports = {
 </script>
 
 <style lang="scss" scoped>
+.invalid {
+    border-color: red;
+}
+
+.item-form {
+    width: 100%;
+}
 </style>
