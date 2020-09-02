@@ -13,6 +13,7 @@ module.exports = {
     props: ["item"],
     methods: {
         onDelete() {
+            // Emits custom event to be caught by parent component
             this.$emit("deleteItem", this.item.index)
         }
     }

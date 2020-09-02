@@ -1,17 +1,23 @@
 <template>
+<!-- In Vue 2.x every component must have a single top-level item-->
 <div>
+    <!-- This if statement will affect any item inside template, template tag will not be render -->
     <template v-if="ready">
+        <!-- @submit catches any submit event from the form, prevents will cancel any default browser behavior -->
         <form @submit.prevent="onNewItem" class="item-form">
+            <!-- v-model binds a variable to the internal value of the input -->
+            <!-- :class="{}" is one way of managing dynamic styles for components -->
             <input type="text" v-model="newItem" placeholder="Item" :class="{invalid: !canAddItem}" />
+            <!-- We don't need @click event, as submit event will already take care of this click -->
             <button type="submit" :disabled="!canAddItem">Add</button>
-
+            <!-- Custom list component -->
             <list :items="items" @itemSelected="selectItem"></list>
         </form>
 
+        <!-- Custom detail component -->
         <detail v-if="showDetails" :item="selectedItem" @deleteItem="deleteItem"></detail>
     </template>
-
-    <p v-else>LOADING</p>
+    <spinner v-else></spinner>
 
 </div>
 </template>
@@ -22,7 +28,8 @@
 
 const components = {
     'detail': require('./detail.vue'),
-    'list': require('./list.vue')
+    'list': require('./list.vue'),
+    'spinner': require('./spinner.vue')
 }
 
 module.exports = {
@@ -34,10 +41,10 @@ module.exports = {
             ready: false
         }
     },
-    mounted() {
-        // this.$store.dispatch("fetchItems").then(() => {
+    mounted() { // Called after the component is mounted (i.e. this is available)
+        this.$store.dispatch("fetchItems").then(() => {
             this.ready = true
-        // })
+        })
     },
     computed: {
         showDetails() {
