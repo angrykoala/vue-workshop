@@ -279,6 +279,162 @@ After this, we will set our userInput to an empty string. Because our **v-model*
 We can now remove our test items and set the initial value of items to an empty array.
 
 ## Detailed view
+We want to interact with our list items as well. Clicking on them should open a detailed view of the item, with options such as **delete**.
+
+![](./images/detailed_1.png)
+
+First, we will need a variable in data to hold our selected item:
+
+```js
+data() {
+    return {
+        userInput: "",
+        items: [],
+        selectedItemIndex: null,
+    }
+}
+```
+
+Now, by adding a `@click` event to our items and passing the **index** (i) from the `v-for` directive, we can update this variable:
+
+```html
+<template>
+...
+<li v-for="(item, i) in items" :key="i" @click="itemClicked(i)">{{item}}</li>
+...
+</template>
+
+<script>
+...
+methods: {
+  ...
+  itemClicked(i) {
+      this.selectedItemIndex = i;
+  }
+}
+...
+</script>
+```
+
+> Using <a> for the clickable items or styles would be a good idea to provide feedback.
+
+Now, we have everything we need for our detailed view. Let's begin by creating our template:
+
+```html
+<template>
+  ...
+  <div>
+      <h1>Details for {{items[selectedItemIndex]}}</h1>
+      <p>Index: {{selectedItemIndex}}</p>
+      <button @click="onDelete">Delete {{items[selectedItemIndex]}}</button>
+  </div>
+</template>
+```
+
+And our **onDelete** method:
+```js
+onDelete() {
+    this.items.splice(this.selectedItemIndex, 1);
+    this.selectedItemIndex = null;
+}
+```
+
+![](./images/detailed_2.png)
+
+### Conditional rendering
+Our Detailed View is always visible, even if no item is selected. To avoid rendering it until an item is selected, we will use the `v-if` directive.
+
+`v-if` allows us to render an element in our template only if a condition is met, in this case, we only want our detailed view to be rendered if an item is selected:
+
+```html
+<template>
+  ...
+  <div v-if="selectedItemIndex!==null">
+      <h1>Details for {{items[selectedItemIndex]}}</h1>
+      ....
+  </div>
+</template>
+
+```
+
+### Computed properties
+Adding complex logic in our templates that depend on reactive variables will soon lead to hard to maintain code, in the example above our `v-if` logic is still pretty simple, but it is easy to imagine how complex the condition may grow.
+
+Instead of trying to use a method or an extra property, to decouple the logic from the template without compromising performance, we will use Vue [computed properties](https://vuejs.org/v2/guide/computed.html).
+
+A computed property behaves similar to **getters** in classes, as they are methods that can be used as properties. However, they have 2 key particularities:
+* A computed property will be reactive, just like normal properties.
+* A computed property uses some sort of memoization (unlike methods or [watchers](https://vuejs.org/v2/guide/computed.html#Watchers)) so it is only executed when referenced properties change. This means that even costly operations can be efficiently delegated to a computed property.
+
+In our example, lets move our `selectedItemIndex!==null` to a computed property:
+
+```html
+<template>
+  ...
+  <div v-if="showDetail">
+      ....
+  </div>
+</template>
+
+<script>
+module.exports = {
+    data() {
+      // ...
+    },
+    methods: {
+      // ...
+    },
+    computed:{
+      showDetail(){
+        return this.selectedItemIndex!==null
+      },
+    }
+}
+
+</script>
+```
+
+In this example, `showDetail` acts as a read-only property that can be accessed in the template or methods of the component.
+
+It is implemented the same way as methods, but under the **computed** section, the computed property has access to the component state and its methods, the memoization happens automatically on the reactive properties used, in this example the `showDetail` will always be in sync with the `selectedItemIndex`.
+
+### Add some style
+
+We have a detailed view, but it requires some extra **css styles** to look nice!
+
+To add styles to our component, we will add a class and create a new section:
+
+
+```html
+<template>
+  ...
+  <div v-if="showDetail" class="detailed-view">
+    ...
+  <div>
+</template>
+
+<script>
+// ...
+</script>
+
+
+<style lang="scss" scoped>
+.detailed-view {
+    background-color: #e2e2e2;
+
+    button {
+        background-color: #c90000;
+    }
+}
+</style>
+```
+
+The `<style>` directive, by default, will contain `css` styles that will be injected into the final page. The 2 directives added are optional:
+* **lang**: This define the language to use, in this case we will be using [scss](https://sass-lang.com/documentation/syntax) instead of plain css.
+* **scoped**: This marks the css to **only** affect the current component. It is recommended to **always** add this directive, and leave any global css to a common css file.
+
+The content of the `<style>` is just plain **scss**, which works similar to css. Plain **css** can also be used.
+
 
 ## Separating in components
 
