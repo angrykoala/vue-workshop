@@ -1,10 +1,47 @@
-# Vue.js Workshop
+Vue.js Workshop
+=================
 A simple guide to get started with Vue.js
+
+<!-- npx markdown-toc README.md -i --maxdepth=4 -->
+
+<!-- toc -->
+
+- [Setup](#setup)
+- [Basics](#basics)
+  * [Building our first component](#building-our-first-component)
+    + [Template](#template)
+    + [Script](#script)
+    + [Styles](#styles)
+  * [Our first component](#our-first-component)
+    + [State](#state)
+    + [Interactions](#interactions)
+- [Lets build an app](#lets-build-an-app)
+  * [Text input](#text-input)
+  * [Building a list](#building-a-list)
+    + [Adding items to the list](#adding-items-to-the-list)
+- [Detailed view](#detailed-view)
+  * [Conditional rendering](#conditional-rendering)
+  * [Computed properties](#computed-properties)
+  * [Add some style 🕶️](#add-some-style-%F0%9F%95%B6%EF%B8%8F)
+- [Split into components](#split-into-components)
+  * [Detailed view](#detailed-view-1)
+  * [Using events](#using-events)
+- [Vuex](#vuex)
+  * [Vuex Setup](#vuex-setup)
+  * [Vuex Store](#vuex-store)
+  * [Using the store](#using-the-store)
+    + [Modifying the store](#modifying-the-store)
+  * [Using an external API](#using-an-external-api)
+    + [Vuex actions](#vuex-actions)
+    + [Using actions](#using-actions)
+  * [Loading message](#loading-message)
+- [Resources](#resources)
+
+<!-- tocstop -->
 
 In this guide we'll build a simple list application in which we will add, select and delete items from a list:
 
 ![](./images/final_example.png)
-
 
 ## Setup
 > This project require an up-to-date node and npm installed
@@ -60,7 +97,7 @@ Usually, all styles should be scoped, global styles can be imported through glob
 
 > When using _.vue_ files, the styles will be inserted into `<style></style>` tags. It is recommended to use **scoped** styles: `<style scoped>`.
 
-## Our first component
+### Our first component
 
 In our **app.vue** file, we will write the simplest component by adding some raw html to our template:
 
@@ -76,7 +113,7 @@ If we run our project now (`npm start`) we will get our lovely message.
 
 However, a component with only plain HTML is not a lot of fun. Before attempting to build our app, lets make this component a bit more interesting.
 
-### State
+#### State
 A component has an internal state that contains the dynamic data.
 
 We will create a `<script>` section with a `data` method that contains our state:
@@ -116,7 +153,7 @@ Vue will take care of updating the HTML whenever the internal state of the compo
 
 > Unlike plain string concatenation, template interpolation will also take care of escaping the input to avoid HTML injection.
 
-### Interactions
+#### Interactions
 > Vue component goes brrr
 
 We have a fancy dynamic field and a component that will react to it, but it is not very useful if we cannot change it.
@@ -210,7 +247,7 @@ The variable is then rendered in the `<p>` element for debugging purposes.
 
 The text will update whenever the input changes. We can remove the `<p>` element now we confirmed our binding works.
 
-## Building a list
+### Building a list
 Next, we need our items list. We will add a new variable to our data:
 ```js
 data() {
@@ -238,7 +275,7 @@ In this case, we are simply displaying the item with interpolation inside the `<
 
 > The **:key** property is a requirement for loops, this ensures that items inside the loop are properly (and efficiently) re-rendered when the array is modified. For simple cases like this using the item index as key is enough.
 
-## Adding items to the list
+#### Adding items to the list
 We will now add new items to the list through our input.
 
 We can achieve this multiple ways, like adding a button and listening to the click event. However, to be able to also support the default input methods (like pressing enter) we can use native forms:
@@ -550,7 +587,7 @@ And now, our list application is finished and working.
 
 > Another improvement to be done is extract the whole list into a separate component, to reduce complexity of the root component.
 
-# Vuex
+## Vuex
 In this section, we will include [Vuex](https://vuex.vuejs.org). The most common state management library for Vue.
 
 While props+events will usually cover most of our inter-component communication needs, most medium and large applications will require some data to be shared between several components, and moving this data along our tree becomes increasingly problematic. For this cases, a common state object is required.
@@ -559,7 +596,7 @@ While props+events will usually cover most of our inter-component communication 
 
 In out application, we will setup a **Vuex store** and add our list as the common data. We will then request this list to a fake API to emulate a real case with a server.
 
-## Vuex Setup
+### Vuex Setup
 
 Most of the required setup is already commneted in _app.js_:
 
@@ -584,7 +621,7 @@ _app.js_
 
 First, we are importing **Vuex** and adding it to Vue as a plugin. We now need to import our store and add it to our root component so it is available to all the application.
 
-## Vuex Store
+### Vuex Store
 We will create a _store.js_ file:
 
 ```js
@@ -621,7 +658,7 @@ A **Vuex** store may have the following properties/sections:
 
 > Vue Devtools plugin has access to the store and lists all the mutations for debugging purposes.
 
-## Using the store
+### Using the store
 In our components we can now access the store by using `this.$store`.
 
 > Using $ is a convention for properties common to all Vue components such as `$emit` or `$store`
@@ -664,7 +701,7 @@ _detail.vue_
 
 This ensures that our items list in the store is the truth source of our data for all our components, with more dynamic things like user interaction (`selectedIndex` or `userInput`) still encapsulated in the components that provide that interaction.
 
-### Modifying the store
+#### Modifying the store
 
 We should not modify the store state directly, instead, we will use the **mutations** we defined in the store in our root component by calling `$store.commit`:
 
@@ -685,7 +722,7 @@ methods: {
 ```
 _app.vue_
 
-## Using an external API
+### Using an external API
 We will now fetch our list from an external (fake) API.
 
 First we will add a *fake_api.js* file:
@@ -706,7 +743,7 @@ module.exports = {
 
 In a real application, this method would perform a request.
 
-### Vuex actions
+#### Vuex actions
 Vuex mutations are synchronous, for cases where the update needs to be done asynchronous, like in requests, we will use `actions` instead:
 
 ```js
@@ -729,7 +766,7 @@ _store.js_
 
 Now, the `fetchItems` action will perform the request, and, eventually, call the `replaceItems` mutation.
 
-### Using actions
+#### Using actions
 Just like mutations, actions need to be called through a method `dispatch`.
 
 We will call our `fetchItems` action in our root component when it loads. We can do it by using our components [lifecycle hooks](https://vuejs.org/v2/guide/instance.html#Instance-Lifecycle-Hooks):
@@ -754,7 +791,7 @@ Inside the mounted hook we call our action by using **dispatch**. Because our ac
 
 If we now reload out page, we see that, after 3 seconds, it loads the list provided by our API.
 
-### Loading spinner
+### Loading message
 Because our API takes so long to load the list, we do not want to show nor allow edition on this list until the request has finished.
 
 This can be achieved in several ways, in this case, we will use a property `ready` in our root component.
@@ -801,3 +838,13 @@ _app.vue_
 The first thing that we will notice, is the extra `<template>` tag inside our template. This tag simply tells Vue that the **v-if** directive affects all the elements inside it. The same can be achieved by using a `<div>` but template won't render in the final html.
 
 After the template, the new `<p>` element uses **v-else** that behaves as you could expect.
+
+## Resources
+
+* https://vuejs.org/
+* https://vuex.vuejs.org/
+* https://router.vuejs.org/
+
+------
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
