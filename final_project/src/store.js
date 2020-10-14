@@ -1,6 +1,5 @@
 "use strict";
 const Vuex = require("vuex").default;
-const Vue = require("vue/dist/vue.common");
 
 const fakeApi = require('./fake_api.js')
 
@@ -28,6 +27,5 @@ module.exports = new Vuex.Store({
                 context.commit("replaceItems", items);
             })
         }
-
     }
 });

@@ -545,3 +545,159 @@ Now we can capture the event `deleteItem` in the same fashion as other events li
 And now, our list application is finished and working.
 
 # Vuex
+In this section, we will include [Vuex](https://vuex.vuejs.org). The most common state management library for Vue.
+
+While props+events will usually cover most of our inter-component communication needs, most medium and large applications will require some data to be shared between several components, and moving this data along our tree becomes increasingly problematic. For this cases, a common state object is required.
+
+> As a rule of thumb, when the data is shared between a parent and child component, or between siblings, props+events are the preferred way of sharing data, as this keeps the components encapsulation, which is usually broken for common state data.
+
+In out application, we will setup a **Vuex store** and add our list as the common data. We will then request this list to a fake API to emulate a real case with a server.
+
+## Vuex Setup
+
+Most of the required setup is already commneted in _app.js_:
+
+```js
+'use strict';
+
+const Vue = require('vue/dist/vue.common');
+const Vuex = require("vuex").default;
+
+Vue.use(Vuex);
+
+const app = require('./components/app.vue');
+const store = require("./store");
+
+module.exports = new Vue({
+    el: '#app',
+    store,
+    render: h => h(app)
+});
+```
+_app.js_
+
+First, we are importing **Vuex** and adding it to Vue as a plugin. We now need to import our store and add it to our root component so it is available to all the application.
+
+## Vuex Store
+We will create a _store.js_ file:
+
+```js
+"use strict";
+const Vuex = require("vuex").default;
+
+module.exports = new Vuex.Store({
+    state: {
+        items: []
+    },
+    getters: {
+    },
+    mutations: {
+        addItem(state, item) {
+            state.items.push(item);
+        },
+        deleteItem(state, index) {
+            state.items.splice(index, 1);
+        },
+    },
+    actions: {
+    }
+});
+```
+_store.js_
+
+A **Vuex** store may have the following properties/sections:
+* **state** defines the properties of the store and the default values.
+* **getters** will execute and memoize a dynamic a read-only property.
+* **mutations** are **synchronous** methods that modify the state.
+  * The state should only be modified inside mutations.
+  * In out store, we added mutations for add and remove elements from our items list.
+* **actions** are **asynchronous** methods that commit mutations.
+
+> Vue Devtools plugin has access to the store and lists all the mutations for debugging purposes.
+
+## Using the store
+In our components we can now access the store by using `this.$store`.
+
+> Using $ is a convention for properties common to all Vue components such as `$emit` or `$store`
+
+We can now remove the "items" property in the root state and item props and use the store instead
+
+```html
+<template>
+  ...
+  <detail v-if="showDetail" :itemIndex="selectedItemIndex" @deleteItem="onDelete"></detail>
+  ...
+</template>
+
+<script>
+...
+computed: {
+  ...
+  items() { // Using a computed property to reduce verbosity
+    return this.$store.state.items;
+  }
+}
+</script>
+```
+_app.vue_
+
+```html
+
+
+<script>
+...
+computed: {
+  item() {
+    return this.$store.state.items[this.itemIndex];
+  }
+}
+</script>
+
+```
+_detail.vue_
+
+This ensures that our items list in the store is the truth source of our data for all our components, with more dynamic things like user interaction (`selectedIndex` or `userInput`) still encapsulated in the components that provide that interaction.
+
+### Modifying the store
+
+We should not modify the store state directly, instead, we will use the **mutations** we defined in the store in our root component by calling `$store.commit`:
+
+```html
+<script>
+methods: {
+    onNewItem() {
+        this.$store.commit("addItem", this.userInput);
+        this.userInput = "";
+    },
+    onDelete() {
+        this.$store.commit("deleteItem", this.selectedItemIndex);
+        this.selectedItemIndex = null;
+    },
+    ...
+},
+</script>
+```
+_app.vue_
+
+## Using an external API
+We will now fetch our list from an external (fake) API.
+
+First we will add a *fake_api.js* file:
+```js
+"use strict";
+
+module.exports = {
+    fetchItems() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(["eggs", "milk"])
+            }, 3000)
+        })
+    }
+}
+```
+*fake_api.js*
+
+In a real application, this method will perform a request.
+
+// TODO
