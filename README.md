@@ -1,7 +1,7 @@
 # Vue.js Workshop
 A simple guide to get started with Vue.js
 
-In this guide we'll build a simple list application in which we will add, select and delete items:
+In this guide we'll build a simple list application in which we will add, select and delete items from a list:
 
 ![](./images/final_example.png)
 
@@ -13,51 +13,52 @@ In this guide we'll build a simple list application in which we will add, select
 2. `npm install` (or `yarn`)
 3. `npm start` (or `yarn start`)
   * This command will fail until we build out first component!
-4. App will be available in `http://localhost:1234`
+4. App should be available at `http://localhost:1234`
 
 > A working example of the project is available in `final_project`, follow the same steps in that folder to try it
 
 ## Basics
 
-Our basic setup uses [Parcel](https://parceljs.org/cli.html) for transpiling and bundling our source code into the _public_ folder. It will also provide a hot-reload server.
+Our basic setup uses [Parcel](https://parceljs.org/cli.html) for transpiling and bundling our source code into the _public_ folder. It also provides a hot-reload server.
 
-In the _src_ folder we have the basic code that we need to get started in our app development. A brief explanation of these files:
-* **index.html** is our app entry point, and the base file that we will send to our users. It contains links to our stylesheet (https://andybrewer.github.io/mvp) and our Vue application (_app.js_).
+In the _src_ folder we have the minimal code that we need to get started in our app development. A brief explanation of these files:
+* **index.html** is our app entry point. It contains links to our stylesheet (https://andybrewer.github.io/mvp) and our Vue application (_app.js_).
 * **app.js** contains our application setup and mounts our app in the `#app` element.
 * components/**app.vue** is our main component (root) to be mounted inside the `#app` element.
 
+> All out imports are relative to our source code, Parcel will take care of modifying the paths to use the transpiled files
 
 ### Building our first component
-Vue components can be build in plain js, separate into multiple files, or, usually, in [**.vue** files](https://vuejs.org/v2/guide/single-file-components.html).
+Vue components can be build in plain JavaScript, split into multiple files, or, usually, in [**.vue** files](https://vuejs.org/v2/guide/single-file-components.html).
 
-> A .vue file contains a single component.
+> Each .vue file contains a single component.
 
 Components have 3 parts:
 
 #### Template
 The template contains the code that will, eventually, be rendered as **html**.
 
-Usually, plain **html** along with extended template syntax is used.
+Usually, plain **html** along with an extended template syntax is used.
 
-> When using _.vue_ files, the template will be inserted into `<template></template>` tags
+> In _.vue_ files, the template will be inserted into `<template></template>` tags.
 
 #### Script
-This contain the logic of our component. Ideally, all our component's logic will be inside its script, and this script should not affect other components.
+This contain the logic of our component. Ideally, all our component's logic will be inside its own script, and it should not affect other components.
 
 The script can be written with plain **JavaScript** or **TypeScript** among other options.
 
-Our code will, ultimately, export a single object containing all out component's state and logic.
+Our code will export a single object containing all out component's state and logic.
 
 > When using _.vue_ files, the script will be inserted into `<script></script>` tags.
 
 #### Styles
-Styles contain the **css** (or [**scss**](https://sass-lang.com/documentation/syntax)) that will be used to in the template.
+Styles contain the **css** (or [**scss**](https://sass-lang.com/documentation/syntax)) that will be used in the template.
 
-These styles, by default, are applied to all the application (just like CSS works), but by defining the style as [**scoped**](https://vue-loader.vuejs.org/guide/scoped-css.html) it will only affect its component.
+These styles, by default, are applied to all the application, but by defining the style as [**scoped**](https://vue-loader.vuejs.org/guide/scoped-css.html) it will only affect its component.
 
-Usually, all styles should be scoped, global styles should be imported through global stylesheets to avoid unwanted dependencies between components.
+Usually, all styles should be scoped, global styles can be imported through global stylesheets to avoid unwanted dependencies between components.
 
-> When using _.vue_ files, the styles will be inserted into `<style></style>` tags. It is recommended to use **scoped** styles:`<style scoped>`.
+> When using _.vue_ files, the styles will be inserted into `<style></style>` tags. It is recommended to use **scoped** styles: `<style scoped>`.
 
 ## Our first component
 
@@ -69,7 +70,7 @@ In our **app.vue** file, we will write the simplest component by adding some raw
 </template>
 ```
 
-As you can see, a component does not need a explicit **script** nor **styles**.
+As you can see, a component doesn't need a explicit **script** nor **styles**.
 
 If we run our project now (`npm start`) we will get our lovely message.
 
@@ -78,7 +79,7 @@ However, a component with only plain HTML is not a lot of fun. Before attempting
 ### State
 A component has an internal state that contains the dynamic data.
 
-We will create a `<script>` section with out component and a `data` method that contains our state:
+We will create a `<script>` section with a `data` method that contains our state:
 
 ```html
 <template>
@@ -86,8 +87,8 @@ We will create a `<script>` section with out component and a `data` method that 
 </template>
 
 <script>
-module.exports = { // ES6 export syntax available
-  data(){
+module.exports = { // ES6 export syntax also available
+  data() {
     return {
       text: "hello world"
     }
@@ -100,7 +101,7 @@ The **data** method returns an object, this object is the internal state of the 
 
 However, running this won't make a difference, the template is still a static HTML!.
 
-We can easily change this by using the handy template interpolation:
+We can easily change this by using [template interpolation](https://vuejs.org/v2/guide/syntax.html#Interpolations):
 
 ```html
 <template>
@@ -120,7 +121,7 @@ Vue will take care of updating the HTML whenever the internal state of the compo
 
 We have a fancy dynamic field and a component that will react to it, but it is not very useful if we cannot change it.
 
-We will begin by modifying the template a bit and adding a button:
+We will begin by modifying the template a bit by adding a button:
 
 ```html
 <template>
@@ -142,7 +143,7 @@ module.exports = {
 </script>
 ```
 
-> Notice the div we added. In Vue 2.x a component can only contain a single root element, so for complex components a div is usually placed on top.
+> Notice the div we added. In Vue 2.x a component can only contain a single root element, so for complex components a everything is wrapped inside a div
 
 ![](./images/counter_1.png)
 
@@ -169,13 +170,12 @@ module.exports = {
 
 In our template, we listen to an event by using `@[event]`, in this case `@click` and assigning a method of the component.
 
-Methods are defined inside the **methods** property, these methods are available in the template and through the component by using **this**.
+Methods are, unsurprisingly, defined inside the **methods** property, these methods are available in the template and through the component by using **this**.
 
 Running the app now should work as expected. The component is listening to all button click events, and for each button the variable _count_ is increased by one and the template is rendered accordingly.
 
 
 ## Lets build an app
-Now we can start building our list app!!
 
 ### Text input
 First, we need to add a text input and "read" its value somehow, lets rewrite out template and script once more:
@@ -221,9 +221,9 @@ data() {
 }
 ```
 
-In this case we created an array, and added a couple of elements so we can see something when we render it.
+In this case we will use an array, and add a couple of elements so we can see something when we render it.
 
-We will render our list using HTML `<ul>` and `<li>`, however, because we don't know how many elements we will need, we will make our `<li>` dynamic, one per element:
+We will render our list using HTML `<ul>` and `<li>`, however, because we don't know how many elements we will need, we will make our `<li>` dynamic, one per element by using **[v-for](https://vuejs.org/v2/guide/list.html)**:
 ```html
 <template>
 ...
@@ -232,17 +232,16 @@ We will render our list using HTML `<ul>` and `<li>`, however, because we don't 
 </ul>
 </template>
 ```
-With the property **v-for** we can render an element as many times as elements are in an array. The variables **item** and **i** contain the current item and its index respectively. These 2 variables can be used on the rendered element.
+With the property **v-for** we can render an element for each item are in an array. The variables **item** and **i** contain the current item and its index respectively. These 2 variables can be used in the rendered element.
 
 In this case, we are simply displaying the item with interpolation inside the `<li>` tag.
 
-> The **:key** property is a requirement for loops, this ensures that items inside the loop are properly (and efficiently) rendered when the array is modified. For simple cases like this using the item index as key is enough.
-
+> The **:key** property is a requirement for loops, this ensures that items inside the loop are properly (and efficiently) re-rendered when the array is modified. For simple cases like this using the item index as key is enough.
 
 ## Adding items to the list
-Our list is a bit static, we want to update it with out text input.
+We will now add new items to the list through our input.
 
-We can achieve this multiple ways, like adding a button and listening to the click event. However, to be able to also support the usual input methods (like pressing enter) we can use native forms:
+We can achieve this multiple ways, like adding a button and listening to the click event. However, to be able to also support the default input methods (like pressing enter) we can use native forms:
 
 ```html
 <template>
@@ -255,7 +254,7 @@ We can achieve this multiple ways, like adding a button and listening to the cli
 </template>
 ```
 
-In this example, we are using a native HTML form along with a button of type **submit**. This ensures that most usual inputs for the form are handled and captured by our **@submit** in the form (note that no event is captured in the button now).
+In this example, we are using a native HTML form along with a button of type **submit**. This ensures that default inputs for the form are handled and captured by our **@submit** event in the form. We don't need to capture any event in the button now).
 
 The **.prevent** modifier prevents browser to perform the default request made when forms are submitted. Just like our click example, a method is assigned to be triggered by our event.
 
@@ -270,9 +269,9 @@ methods: {
 }
 ...
 ```
-When the user submits its input, we will simply add to the items array. The **v-for** will render the new element accordingly.
+When the user submits its input, we will simply add to the items array. The **v-for** will render the new element.
 
-After this, we will set our userInput to an empty string. Because our **v-model** binds the `<input>` element and our variable on both ways, we will, effectively, clear the input box.
+After this, we will set our userInput to an empty string. Because our **v-model** binds the `<input>` element and our variable on both directions, we will, effectively, clear the input box.
 
 ![](./images/list_1.png)
 
@@ -316,9 +315,11 @@ methods: {
 </script>
 ```
 
-> Using <a> for the clickable items or styles would be a good idea to provide feedback.
+Note that event callbacks may receive parameters, in this case we send the index of our selected item.
 
-Now, we have everything we need for our detailed view. Let's begin by creating our template:
+> Pro-tip: We could use `<a>` elements for the clickable items instead of raw text.
+
+Now, we have everything we need for our detailed view. Let's begin by updating our template:
 
 ```html
 <template>
@@ -331,7 +332,7 @@ Now, we have everything we need for our detailed view. Let's begin by creating o
 </template>
 ```
 
-And our **onDelete** method:
+And adding the **onDelete** method:
 ```js
 onDelete() {
     this.items.splice(this.selectedItemIndex, 1);
@@ -342,7 +343,7 @@ onDelete() {
 ![](./images/detailed_2.png)
 
 ### Conditional rendering
-Our Detailed View is always visible, even if no item is selected. To avoid rendering it until an item is selected, we will use the `v-if` directive.
+Now, our Detailed View is always visible, even if no item is selected. To avoid rendering it until an item is selected, we can use the `v-if` directive.
 
 `v-if` allows us to render an element in our template only if a condition is met, in this case, we only want our detailed view to be rendered if an item is selected:
 
@@ -354,15 +355,14 @@ Our Detailed View is always visible, even if no item is selected. To avoid rende
       ....
   </div>
 </template>
-
 ```
 
 ### Computed properties
-Adding complex logic in our templates that depend on reactive variables will soon lead to hard to maintain code, in the example above our `v-if` logic is still pretty simple, but it is easy to imagine how complex the condition may grow.
+Adding complex logic in our templates that depend on reactive variables will soon lead to hard to maintain code, in the example above our `v-if` logic is still pretty simple, but it is easy to imagine how the condition may grow.
 
 Instead of trying to use a method or an extra property, to decouple the logic from the template without compromising performance, we will use Vue [computed properties](https://vuejs.org/v2/guide/computed.html).
 
-A computed property behaves similar to **getters** in classes, as they are methods that can be used as properties. However, they have 2 key particularities:
+A computed property is somewhat similar to **getters** in classes, as they are methods that can be used as properties, however, properties have 2 key differences:
 * A computed property will be reactive, just like normal properties.
 * A computed property uses some sort of memoization (unlike methods or [watchers](https://vuejs.org/v2/guide/computed.html#Watchers)) so it is only executed when referenced properties change. This means that even costly operations can be efficiently delegated to a computed property.
 
@@ -396,13 +396,13 @@ module.exports = {
 
 In this example, `showDetail` acts as a read-only property that can be accessed in the template or methods of the component.
 
-It is implemented the same way as methods, but under the **computed** section, the computed property has access to the component state and its methods, the memoization happens automatically on the reactive properties used, in this example the `showDetail` will always be in sync with the `selectedItemIndex`.
+It's implemented like methods, but under the **computed** section. Computed properties have access to the component state and its methods, the _memoization_ happens automatically on the reactive properties used, in this example the `showDetail` will always be in sync with the `selectedItemIndex`.
 
-### Add some style
+### Add some style 🕶️
 
-We have a detailed view, but it requires some extra **css styles** to look nice!
+We have a detailed view, but we need some extra **css styles** for it to look nice!
 
-To add styles to our component, we will add a class and create a new section:
+To add styles to our component, we will add a class to our element and will include a new `<style>` section:
 
 
 ```html
@@ -429,27 +429,29 @@ To add styles to our component, we will add a class and create a new section:
 </style>
 ```
 
-The `<style>` directive, by default, will contain `css` styles that will be injected into the final page. The 2 directives added are optional:
+The `<style>` directive, by default, will contain `css` styles that will be injected into the final page. The 2 extra directives are optional:
 * **lang**: This define the language to use, in this case we will be using [scss](https://sass-lang.com/documentation/syntax) instead of plain css.
-* **scoped**: This marks the css to **only** affect the current component. It is recommended to **always** add this directive, and leave any global css to a common css file.
+* **scoped**: This marks the css to **only** affect the current component. It is recommended to **always** add this directive, and delegate any global styles to a common css file.
 
-The content of the `<style>` is just plain **scss**, which works similarly to css. Plain **css** can also be used.
+> The content of the `<style>` **scss** code, which works similarly to css. Plain **css** can also be used.
 
 
 ## Split into components
 
-As our application grows, using a single component stops being a good idea, we need to split our application into separate components.
+As our application grows, using a single component stops being efficient, we will need to split our application into separate components eventually.
 
 Because a Vue app is, in itself, a component (root), all other components will hang from it, so our app will end up structured like a tree.
 
-Each component will, ideally, contain a template, logic and style decoupled from other components, so we can move and reuse each component as a self-contained entity. In real apps, however, components need to communicate to update and react. To achieve this wew use **props** and **events**.
+Each component will, ideally, contain a template, logic and style decoupled from other components, so we can move and reuse each component as a self-contained entity. In real apps, however, components need to communicate to update and react. To achieve this we use **props** and **events**.
 
 ![](./images/parent_child_diagram.png)
 
-* **Props**: A parent can send reactive data to its children, each time this data changes, the child will be rendered accordingly.
-* **Events**:
+* **Props**: A parent can send reactive properties to its children, each time this data changes, the child will render.
+* **Events**: Like the `@click` event we already used in a button, out components can also emit custom events that the parent may capture to update itself.
 
-### Detail view
+> Props+Events are the default ways of communication between components in Vue, but as our application grows, other tools such as [Vuex](https://vuex.vuejs.org) become necessary.
+
+### Detailed view
 Let's move our **detail** view into a separate component in a new file `detail.vue`.
 
 ```html
@@ -485,9 +487,9 @@ module.exports = {
 ```
 _detail.vue_
 
-Most of the template and style are the same as the original component. The script, however, has a new property.
+Most of the template and style are the same as the original component.
 
-**Props** are data objects sent from the parent component, in this example, we will receive **item** and **itemIndex** from the parent component.
+**Props** are data properties sent from the parent component, in this example, we will receive **item** and **itemIndex** from the parent component. Just like `data` properties, props can be used in the template and the rest of the component.
 
 Lets adapt our **root** component to use the new component and pass the required props:
 
@@ -499,8 +501,8 @@ Lets adapt our **root** component to use the new component and pass the required
 
 
 <script>
-const components={
-  'detail': require('./detail.vue')
+const components = {
+  'detail': require('./detail.vue') // ES6 imports also availabe
 }
 
 module.exports = {
@@ -511,11 +513,13 @@ module.exports = {
 ```
 _app.vue_
 
-First, we import our component using `require('./detail.vue')`. We can add it to our root component with the directive `components` which is an object, with the key being the name to be used in the template.
+First, we import our component using `require('./detail.vue')` and add it to our root component with the directive `components`.
 
-We can now use `<detail>` to inject the component into our template. By using `:item` we can pass our props to the component. Note that props can be part of the internal state, computed properties or other props.
+**Components** is an object with the key being the name to be used in the template.
 
-We can use our `v-if` directive directly on this component, so it is not rendered unless needed.
+We can now use a `<detail>` tag to inject the component into our template. By using `:[propName]` we can pass our props to the component. Note that props can be from the internal state, computed properties or other props.
+
+We can also use our `v-if` directive directly on this component, so it is not rendered unless needed.
 
 > We can also, remove all the contents of our `<style>`, as the detail component already has its own styles.
 
@@ -537,5 +541,7 @@ Now we can capture the event `deleteItem` in the same fashion as other events li
 ```html
 <detail ... @deleteItem="onDelete"></detail>
 ```
+
+And now, our list application is finished and working.
 
 # Vuex
