@@ -7,7 +7,7 @@
         <form @submit.prevent="onNewItem" class="item-form">
             <!-- v-model binds a variable to the internal value of the input -->
             <!-- :class="{}" is one way of managing dynamic styles for components -->
-            <input type="text" v-model="newItem" placeholder="Item" :class="{invalid: !canAddItem}" />
+            <input type="text" v-model="userInput" placeholder="Item" :class="{invalid: !canAddItem}" />
             <!-- We don't need @click event, as submit event will already take care of this click -->
             <button type="submit" :disabled="!canAddItem">Add</button>
         </form>
@@ -36,7 +36,7 @@ module.exports = {
     components,
     data() {
         return {
-            newItem: "",
+            userInput: "",
             selectedItemIndex: null,
             ready: false
         }
@@ -61,14 +61,14 @@ module.exports = {
             return this.$store.state.items
         },
         canAddItem() {
-            return this.newItem && this.items.length < 10;
+            return this.userInput && this.items.length < 10;
         }
     },
     methods: {
         onNewItem() {
             if (this.canAddItem) {
-                this.$store.commit("addItem", this.newItem);
-                this.newItem = ""
+                this.$store.commit("addItem", this.userInput);
+                this.userInput = ""
             }
         },
         deleteItem(index) {

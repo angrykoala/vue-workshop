@@ -317,7 +317,7 @@ methods: {
 
 Note that event callbacks may receive parameters, in this case we send the index of our selected item.
 
-> Pro-tip: We could use `<a>` elements for the clickable items instead of raw text.
+> **Pro-tip:** We could use `<a>` elements for the clickable items instead of raw text.
 
 Now, we have everything we need for our detailed view. Let's begin by updating our template:
 
@@ -356,6 +356,8 @@ Now, our Detailed View is always visible, even if no item is selected. To avoid 
   </div>
 </template>
 ```
+
+> Like **v-if**, Vue templates also provide a **vue-else** and **vue-else-if**
 
 ### Computed properties
 Adding complex logic in our templates that depend on reactive variables will soon lead to hard to maintain code, in the example above our `v-if` logic is still pretty simple, but it is easy to imagine how the condition may grow.
@@ -432,6 +434,8 @@ To add styles to our component, we will add a class to our element and will incl
 The `<style>` directive, by default, will contain `css` styles that will be injected into the final page. The 2 extra directives are optional:
 * **lang**: This define the language to use, in this case we will be using [scss](https://sass-lang.com/documentation/syntax) instead of plain css.
 * **scoped**: This marks the css to **only** affect the current component. It is recommended to **always** add this directive, and delegate any global styles to a common css file.
+
+Because our styles are scoped, we do not need to worry about colliding classes in other components.
 
 > The content of the `<style>` **scss** code, which works similarly to css. Plain **css** can also be used.
 
@@ -543,6 +547,8 @@ Now we can capture the event `deleteItem` in the same fashion as other events li
 ```
 
 And now, our list application is finished and working.
+
+> Another improvement to be done is extract the whole list into a separate component, to reduce complexity of the root component.
 
 # Vuex
 In this section, we will include [Vuex](https://vuex.vuejs.org). The most common state management library for Vue.
@@ -698,6 +704,100 @@ module.exports = {
 ```
 *fake_api.js*
 
-In a real application, this method will perform a request.
+In a real application, this method would perform a request.
 
-// TODO
+### Vuex actions
+Vuex mutations are synchronous, for cases where the update needs to be done asynchronous, like in requests, we will use `actions` instead:
+
+```js
+...
+mutations: {
+    ...
+    replaceItems(state, items) {
+        state.items = items
+    }
+},
+actions: {
+    fetchItems(context) {
+        return fakeApi.fetchItems().then((items) => {
+            context.commit("replaceItems", items);
+        })
+    }
+}
+```
+_store.js_
+
+Now, the `fetchItems` action will perform the request, and, eventually, call the `replaceItems` mutation.
+
+### Using actions
+Just like mutations, actions need to be called through a method `dispatch`.
+
+We will call our `fetchItems` action in our root component when it loads. We can do it by using our components [lifecycle hooks](https://vuejs.org/v2/guide/instance.html#Instance-Lifecycle-Hooks):
+
+```html
+<script>
+module.exports = {
+  ...
+  mounted() {
+      this.$store.dispatch("fetchItems");
+  },
+  ...
+}
+</script>
+
+```
+_app.vue_
+
+The hook `mounted` will be called once the component is ready to be used, because we are working with our root component, this will only be called once when the page has loaded.
+
+Inside the mounted hook we call our action by using **dispatch**. Because our action will update the store state, our application will react to these changes once the request is complete.
+
+If we now reload out page, we see that, after 3 seconds, it loads the list provided by our API.
+
+### Loading spinner
+Because our API takes so long to load the list, we do not want to show nor allow edition on this list until the request has finished.
+
+This can be achieved in several ways, in this case, we will use a property `ready` in our root component.
+
+```html
+<script>
+...
+module.exports = {
+  data() {
+      return {
+          ...
+          ready: false
+      }
+  },
+  mounted() {
+    this.$store.dispatch("fetchItems").then(() => {
+        this.ready = true
+    })
+  },
+  ...
+}
+</script>
+```
+_app.vue_
+
+Using this approach, we can update the `ready` flag once the promise returned by the action is resolved.
+
+> Alternatively, the ready flag may be a store property or a getter, updated by the action.
+
+Now, we need to render a loading message until our ready flag is true:
+
+```html
+<template>
+  <div>
+    <template v-if="ready">
+      ...
+    </template>
+    <p v-else>LOADING</p>
+  </div>
+</template>
+```
+_app.vue_
+
+The first thing that we will notice, is the extra `<template>` tag inside our template. This tag simply tells Vue that the **v-if** directive affects all the elements inside it. The same can be achieved by using a `<div>` but template won't render in the final html.
+
+After the template, the new `<p>` element uses **v-else** that behaves as you could expect.

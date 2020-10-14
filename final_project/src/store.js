@@ -1,7 +1,7 @@
 "use strict";
 const Vuex = require("vuex").default;
 
-const fakeApi = require('./fake_api.js')
+const fakeApi = require('./fake_api.js');
 
 module.exports = new Vuex.Store({
     state: {
