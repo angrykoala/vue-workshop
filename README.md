@@ -1,5 +1,7 @@
 Vue.js Workshop
 =================
+_by @angrykoala_
+
 A simple guide to get started with Vue.js
 
 <!-- npx markdown-toc README.md -i --maxdepth=4 -->
