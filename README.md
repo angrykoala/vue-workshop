@@ -1,6 +1,5 @@
 # Vue.js Workshop
-A simple guide to get started with Vue.js
-
+_by @angrykoala_
 In this guide we'll build a simple list application in which we will add, select and delete items from a list:
 
 ![](./images/final_example.png)
