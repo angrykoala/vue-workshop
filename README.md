@@ -433,10 +433,109 @@ The `<style>` directive, by default, will contain `css` styles that will be inje
 * **lang**: This define the language to use, in this case we will be using [scss](https://sass-lang.com/documentation/syntax) instead of plain css.
 * **scoped**: This marks the css to **only** affect the current component. It is recommended to **always** add this directive, and leave any global css to a common css file.
 
-The content of the `<style>` is just plain **scss**, which works similar to css. Plain **css** can also be used.
+The content of the `<style>` is just plain **scss**, which works similarly to css. Plain **css** can also be used.
 
 
-## Separating in components
+## Split into components
 
+As our application grows, using a single component stops being a good idea, we need to split our application into separate components.
+
+Because a Vue app is, in itself, a component (root), all other components will hang from it, so our app will end up structured like a tree.
+
+Each component will, ideally, contain a template, logic and style decoupled from other components, so we can move and reuse each component as a self-contained entity. In real apps, however, components need to communicate to update and react. To achieve this wew use **props** and **events**.
+
+![](./images/parent_child_diagram.png)
+
+* **Props**: A parent can send reactive data to its children, each time this data changes, the child will be rendered accordingly.
+* **Events**:
+
+### Detail view
+Let's move our **detail** view into a separate component in a new file `detail.vue`.
+
+```html
+<template>
+<div class="detailed-view">
+    <h1>Details for {{item}}</h1>
+    <p>Index: {{itemIndex}}</p>
+    <button @click="onDelete" class="delete-button">Delete {{item}}</button>
+</div>
+</template>
+
+<script>
+module.exports = {
+    props: ['item', 'itemIndex'],
+    methods: {
+        onDelete() {
+            // TODO
+        }
+    }
+
+}
+</script>
+
+<style lang="scss" scoped>
+.detailed-view {
+    background-color: #e2e2e2;
+
+    button {
+        background-color: #c90000;
+    }
+}
+</style>
+```
+_detail.vue_
+
+Most of the template and style are the same as the original component. The script, however, has a new property.
+
+**Props** are data objects sent from the parent component, in this example, we will receive **item** and **itemIndex** from the parent component.
+
+Lets adapt our **root** component to use the new component and pass the required props:
+
+```html
+<template>
+...
+<detail v-if="showDetail" :item="items[selectedItemIndex]" :itemIndex="selectedItemIndex"></detail>
+</template>
+
+
+<script>
+const components={
+  'detail': require('./detail.vue')
+}
+
+module.exports = {
+    components,
+    // ...
+}
+</script>
+```
+_app.vue_
+
+First, we import our component using `require('./detail.vue')`. We can add it to our root component with the directive `components` which is an object, with the key being the name to be used in the template.
+
+We can now use `<detail>` to inject the component into our template. By using `:item` we can pass our props to the component. Note that props can be part of the internal state, computed properties or other props.
+
+We can use our `v-if` directive directly on this component, so it is not rendered unless needed.
+
+> We can also, remove all the contents of our `<style>`, as the detail component already has its own styles.
+
+### Using events
+
+Our detailed view looks great, but the `delete` button is not working anymore.
+
+We can listen to our event in the detail component, but to perform the action we need the parent component to be aware of it as well. To do this, we can **emit** an event from the child to the parent.
+
+```js
+onDelete() {
+    this.$emit("deleteItem", this.itemIndex);
+}
+```
+_detail.vue_
+
+Now we can capture the event `deleteItem` in the same fashion as other events like `click`
+
+```html
+<detail ... @deleteItem="onDelete"></detail>
+```
 
 # Vuex
